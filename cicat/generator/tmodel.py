@@ -40,7 +40,13 @@ class VULNERABILITY:
         self.access = []
         self.indicator = []
         self.reserved = False
-        
+
+        # add
+        self.cvssv3 = 0.0
+        self.cpe = ""
+        self.publishedDate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+        self.lastModifiedDate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+
     effectkeys = ['DoS','denial of service', 'denial-of-service', 'hang', 'crash', 'panic', 'outage', 'reload', 'reboot', 'restart', \
                   'degrade', 'flood', 'slow', 'delay', 'replay', 'exhaust', 'leak', 'deplete', 'consume', 'overwrite', 'corrupt', 'modify', 'alter', \
                   'read', 'exfiltrate', 'steal', 'capture', 'obtain sensitive information', 'spoof', 'disrupt', 'execute code', 'arbitrary code', \
@@ -81,7 +87,33 @@ class VULNERABILITY:
         
     def getTarget(self):
         return self.target
-    
+
+        # edit :2022.04.15
+    def setCvssv3(self, cvssv3):
+        self.cvssv3 = cvssv3
+
+    def getCvssv3(self):
+        return self.cvssv3
+
+    def setCpe(self, cpe):
+        self.cpe = cpe
+
+    def getCpe(self):
+        return self.cpe
+
+    def setPublishedDate(self, pubdate):
+        self.publisheddate = pubdate
+
+    def getPublishedDate(self):
+        return self.publisheddate
+
+    def setLastModifiedDate(self, moddate):
+        self.lastmodifieddate = moddate
+
+    def getLastModifiedDate(self):
+        return self.lastmodifieddate
+# end edit here 2022.04.15
+
     def searchbyKeys (self, keylist):
         ret = []
         for k in keylist:
