@@ -30,7 +30,7 @@ import re
 
 class VULNERABILITY:
     _idx = 0
-    def __init__ (self, idx ):
+    def __init__ (self):
         VULNERABILITY._idx += 1 # start from 1
         self.idx = VULNERABILITY._idx
         self.vendor = ''
@@ -42,6 +42,7 @@ class VULNERABILITY:
         self.access = []
         self.indicator = []
         self.reserved = False
+
         # add
         self.hascvss = False
         self.hascpe = False
