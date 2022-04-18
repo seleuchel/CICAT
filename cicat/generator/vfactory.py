@@ -30,12 +30,14 @@ vfactory.py - SAX parser for importing CVE XML file data
 import xml.sax
 import collections
 import re
+import json
 
 from tmodel import VULNERABILITY
 
 m_CVElist = collections.defaultdict(list)
 
-
+'''
+[xml] mitre CVEs
 class CVEHandler (xml.sax.ContentHandler):
     def __init__(self):
         self.CurrentData = ""
@@ -66,7 +68,7 @@ class CVEHandler (xml.sax.ContentHandler):
       elif self.CurrentData == "URL":
           if (content.find('http') >= 0):
              self.currCVE.addReference (content )
-          
+'''
 def findCVEs( pattern):
     ret = []
     p = re.compile(pattern, re.IGNORECASE)
@@ -75,6 +77,53 @@ def findCVEs( pattern):
         if p.search(entry.getDescription().casefold() ):
             ret.append(j)
     return ret
+
+# parseCVEs
+def parseCVEs(file):
+    f = open(file, 'rb')
+    cves_raw = json.loads(f.read())['CVE_Items']
+    f.close()
+
+    for cve_raw in cves_raw:
+        # set vul
+        vul = VULNERABILITY()
+        title = cve_raw['cve']['CVE_data_meta']['ID']
+        vul.setTitle(title) # cve-xxxx-xxxx
+        vul.setDescription(cve_raw['cve']['description']['description_data'][0]['value'])
+        for rf in cve_raw['cve']['references']['reference_data']:
+            vul.addReference(rf)
+
+        # check cvss v3
+        try: # key error
+            if cve_raw['impact'] : # impact is
+                vul.setCvssv3(float(cve_raw['impact']['baseMetricV3']['cvssV3']['baseScore']))
+                vul.setHascvss = True
+        except KeyError:
+                print("no cvssv3")
+
+        # check cpe
+        try: # key error
+            if cve_raw['configurations']['nodes'] : # impact is
+                for cpeinfo in cve_raw['configurations']['nodes']:
+                    cpe_match = cpeinfo['cpe_match']
+                    cpe_children = cpeinfo['children']
+                    if cpe_match:
+                        for cpe in cpe_match:
+                            vul.appendCpe(cpe['cpe23Uri'])
+                    if cpe_children:
+                        for c in cpe_children:
+                            clist = c['cpe_match']
+                            if clist:
+                                for cpe in clist:
+                                    vul.appendCpe(cpe['cpe23Uri'])
+                    vul.setHascpe = True
+        except KeyError:
+                print("no cpe")
+
+        vul.setPublishedDate(cve_raw['publishedDate'])
+        vul.setLastModifiedDate(cve_raw['lastModifiedDate'])
+
+        m_CVElist[title] = vul
 
 def CVEsetbyVendor(vendor):
     ret = set()
@@ -108,21 +157,24 @@ class VULNERABILIY_FACTORY():
        self.trace = trace
        if self.trace:
            print ('VULNERABILITY factory constructed..')
-             
+
+    # change to json of NVD
     def load (self, filelist, ctypelist ):
        self.filelist = filelist
+       '''
+       [xml] mitre CVEs
        parser = xml.sax.make_parser()
        parser.setFeature(xml.sax.handler.feature_namespaces, 0)
        Handler = CVEHandler()
        parser.setContentHandler( Handler )
-
+       '''
        if self.trace:
           print ('Loading CVE data..')
 
        for file in self.filelist:
           if self.trace:
              print ("Loading file:", file )
-          parser.parse(file)
+          parseCVEs(file)
        
        if self.trace:
           print ("CVE data loaded:", len(m_CVElist), "entries")     
@@ -143,7 +195,14 @@ class VULNERABILIY_FACTORY():
        if self.trace:
            print ("dropped REJECTED CVEs:", len(filist_2), "entries")
  
- 
+       # [DBG] bring all CVEs which is great
+       if self.trace:
+           print("+"*10, "Data_Load_Check", "+"*10)
+           ll = m_CVElist.keys()
+           for cveid in ll:
+               print(m_CVElist[cveid])
+           print("=" * 10, "The End", "="*10)
+
        ret = []
        for v in ctypelist:
            

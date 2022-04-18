@@ -29,6 +29,7 @@ tmodel.py - Object classes for vulnerability, indicator, target, scenario, entry
 import re
 
 class VULNERABILITY:
+    _idx = 0
     def __init__ (self, idx ):
         VULNERABILITY._idx += 1 # start from 1
         self.idx = VULNERABILITY._idx
