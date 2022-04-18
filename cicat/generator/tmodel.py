@@ -30,22 +30,24 @@ import re
 
 class VULNERABILITY:
     def __init__ (self, idx ):
-        self.idx = idx
+        VULNERABILITY._idx += 1 # start from 1
+        self.idx = VULNERABILITY._idx
         self.vendor = ''
-        self.title = ''
+        self.title = '' # CVE-XXXX-XXXX
         self.target = ''
-        self.desc = ''
-        self.ref = [] 
+        self.desc = '' # description
+        self.ref = [] # ref list ["https:~",]
         self.effects = []
         self.access = []
         self.indicator = []
         self.reserved = False
-
         # add
-        self.cvssv3 = 0.0
-        self.cpe = ""
-        self.publishedDate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
-        self.lastModifiedDate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+        self.hascvss = False
+        self.hascpe = False
+        self.cvssv3 = 0.0 # check impact is null? [impact][baseMetricV3][cvssV3][baseScore] # no? then, cve
+        self.cpe = []
+        self.publisheddate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+        self.lastmodifieddate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
 
     effectkeys = ['DoS','denial of service', 'denial-of-service', 'hang', 'crash', 'panic', 'outage', 'reload', 'reboot', 'restart', \
                   'degrade', 'flood', 'slow', 'delay', 'replay', 'exhaust', 'leak', 'deplete', 'consume', 'overwrite', 'corrupt', 'modify', 'alter', \
@@ -54,6 +56,27 @@ class VULNERABILITY:
 
     accesskeys = ['remote', 'web interface', 'tcp connection', 'session', 'ethernet', 'local', 'privilege', 'crafted packet']
 
+    # for dbg
+    def __str__(self):
+        result = "============= after load cve =============\n"
+        result += "idx : " + str(self.idx) + "\n"
+        result += "vendor : " + str(self.vendor) + "\n"
+        result += "title : " + str(self.title) + "\n"
+        result += "target : " + str(self.target) + "\n"
+        result += "desc : " + str(self.desc) + "\n"
+        result += "ref : " + str(self.ref) + "\n"
+        result += "effects : " + str(self.effects) + "\n"
+        result += "access : " + str(self.access) + "\n"
+        result += "indicator : " + str(self.indicator) + "\n"
+        result += "reserved : " + str(self.reserved) + "\n"
+        # here
+        result += "hascvss : " + str(self.hascvss) + "\n"
+        result += "hascpe : " + str(self.hascpe) + "\n"
+        result += "cvssv3 : " + str(self.cvssv3) + "\n"
+        result += "cpe : " + str(self.cpe) + "\n"
+        result += "publisheddate : " + str(self.publisheddate) + "\n"
+        result += "lastmodifieddate : " + str(self.lastmodifieddate) + "\n"
+        return result
 
     def getCVE(self):
         return self.title
@@ -88,15 +111,15 @@ class VULNERABILITY:
     def getTarget(self):
         return self.target
 
-        # edit :2022.04.15
+# add
     def setCvssv3(self, cvssv3):
         self.cvssv3 = cvssv3
 
     def getCvssv3(self):
         return self.cvssv3
 
-    def setCpe(self, cpe):
-        self.cpe = cpe
+    def appendCpe(self, cpe):
+        self.cpe.append(cpe)
 
     def getCpe(self):
         return self.cpe
@@ -112,7 +135,20 @@ class VULNERABILITY:
 
     def getLastModifiedDate(self):
         return self.lastmodifieddate
-# end edit here 2022.04.15
+
+    def setHascvss(self, hascvss):
+        self.hascvss = hascvss
+
+    def getHascvss(self):
+        return self.hascvss
+
+    def setHascpe(self, hascpe):
+        self.hascpecvss = hascpe
+
+    def getHascpe(self):
+        return self.hascpe
+# end edit
+
 
     def searchbyKeys (self, keylist):
         ret = []

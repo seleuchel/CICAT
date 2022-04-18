@@ -45,7 +45,7 @@ class CVEHandler (xml.sax.ContentHandler):
     def startElement(self, tag, attributes):
         self.CurrentData = tag
         if tag == "Vulnerability":
-            self.currCVE = VULNERABILITY(attributes["Ordinal"])
+            self.currCVE = VULNERABILITY(attributes["c"])
         elif (( tag == "Note") and (attributes["Type"] == "Other")):
             self.skipflag = True
             
