@@ -1,1 +1,8 @@
-data/
+testdata/
+__pycache__/
+cicat/generator/__pycache__
+cicat/data/CVE
+*.txt
+edit_INFRASTRUCTURE.ap1000.xlsx
+edit_SCENARIOS.ap1000.xlsx
+todolist.txt
