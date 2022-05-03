@@ -167,7 +167,8 @@ class CTYPE_FACTORY(CI_FACTORY):
           sheet = book[self.sheetname]
           ret = []         
           for row in sheet.rows:
-            ret.append(CTYPE (row[0].value, row[1].value, row[2].value, row[3].value, row[4].value ))          
+            ret.append(CTYPE (row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value ))
+            # CTYPEID, Vendor, Description, Type, Platform, Cpe, On
        
           del ret[0]
           return ret

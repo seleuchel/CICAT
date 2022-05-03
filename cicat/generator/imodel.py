@@ -28,7 +28,7 @@ imodel.py - Object classes for infrastructure data
 
 
 class CTYPE:
-    def __init__ (self, ctid, vendor, desc, typex, plat ):
+    def __init__ (self, ctid, vendor, desc, typex, plat, cpes, onmachine):
         self.ctid = ctid
         self.vendor = vendor
         self.desc = desc
@@ -36,7 +36,24 @@ class CTYPE:
         self.plat = plat
         self.vulnerability = []
         self.surface = []
-        
+
+        # add
+        self.cpes = cpes.split(",") if cpes is not None else [] # use ,
+        self.onmachine = onmachine.split(",") if onmachine is not None else []  # use ,
+
+    def __str__ (self): # DBG
+        result = "========== CTYPE ==========" + "\n"
+        result += "ctid : " + str(self.ctid)  + "\n"
+        result += "vendor : " + str(self.vendor) + "\n"
+        result += "desc : " + str(self.desc) + "\n"
+        result += "typex : " + str(self.typex) + "\n"
+        result += "plat : " + str(self.plat) + "\n"
+        result += "vulnerability : " + str(self.vulnerability) + "\n"
+        result += "surface : " + str(self.surface) + "\n"
+        result += "cpes : " + str(self.cpes) + "\n"
+        result += "onmachine : " + str(self.onmachine) + "\n"
+        return result
+
     def getID(self):
         return self.ctid
     

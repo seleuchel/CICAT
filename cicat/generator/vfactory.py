@@ -203,6 +203,11 @@ class VULNERABILIY_FACTORY():
                print(m_CVElist[cveid])
            print("=" * 10, "The End", "="*10)
 
+        # DBG CTYPELIST INFO
+       print("ctypelist")
+       for kk in ctypelist:
+           print(kk)
+
        ret = []
        for v in ctypelist:
            

@@ -28,9 +28,43 @@ tmodel.py - Object classes for vulnerability, indicator, target, scenario, entry
 
 import re
 
+# CPE add
+class CPE:
+    def __init__ (self,cpe, si="", sx="", ei="", ex = ""):
+        self.cpe = cpe
+        # compare version info (str)
+        self.versionStartIncluding = si
+        self.versionStartExcluding = sx
+        self.versionEndIncluding = ei
+        self.versionEndExcluding = ex
+
+    def __str__ (self):
+        ret = "++++cpe++++" + "\n"
+        ret += "cpe : " +  str(self.cpe)  + "\n"
+        ret += "versionStartIncluding : " +  str(self.versionStartIncluding)  + "\n"
+        ret += "versionStartExcluding : " + str(self.versionStartExcluding) + "\n"
+        ret += "versionEndIncluding : "+ str(self.versionEndIncluding)  + "\n"
+        ret += "versionEndExcluding : " + str(self.versionEndExcluding) + "\n"
+        return ret
+
+    def getCPE(self):
+        return self.cpe
+
+    def getStartIncluding(self):
+        return self.versionStartIncluding
+
+    def getStartExcluding(self):
+        return self.versionStartExcluding
+
+    def getEndExcluding(self):
+        return self.versionEndExcluding
+
+    def getEndIncluding(self):
+        return self.versionEndIncluding
+
 class VULNERABILITY:
     _idx = 0
-    def __init__ (self):
+    def __init__ (self ):
         VULNERABILITY._idx += 1 # start from 1
         self.idx = VULNERABILITY._idx
         self.vendor = ''
@@ -42,6 +76,15 @@ class VULNERABILITY:
         self.access = []
         self.indicator = []
         self.reserved = False
+        # 22.04.15
+        self.hascvss = False
+        self.hascpe = False
+        self.cvssv3 = 0.0 # check impact is null? [impact][baseMetricV3][cvssV3][baseScore] # no? then, cve 제외
+        self.cpes = []
+        self.publisheddate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+        self.lastmodifieddate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
+        # 22.04.21
+        self.recent = False  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
 
         # add
         self.hascvss = False
@@ -51,6 +94,7 @@ class VULNERABILITY:
         self.publisheddate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
         self.lastmodifieddate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
 
+    # this info change
     effectkeys = ['DoS','denial of service', 'denial-of-service', 'hang', 'crash', 'panic', 'outage', 'reload', 'reboot', 'restart', \
                   'degrade', 'flood', 'slow', 'delay', 'replay', 'exhaust', 'leak', 'deplete', 'consume', 'overwrite', 'corrupt', 'modify', 'alter', \
                   'read', 'exfiltrate', 'steal', 'capture', 'obtain sensitive information', 'spoof', 'disrupt', 'execute code', 'arbitrary code', \
@@ -75,9 +119,10 @@ class VULNERABILITY:
         result += "hascvss : " + str(self.hascvss) + "\n"
         result += "hascpe : " + str(self.hascpe) + "\n"
         result += "cvssv3 : " + str(self.cvssv3) + "\n"
-        result += "cpe : " + str(self.cpe) + "\n"
+        result += "cpes : " + str(self.cpes) + "\n"
         result += "publisheddate : " + str(self.publisheddate) + "\n"
         result += "lastmodifieddate : " + str(self.lastmodifieddate) + "\n"
+        result += "recent : " + str(self.recent) + "\n"
         return result
 
     def getCVE(self):
@@ -113,20 +158,20 @@ class VULNERABILITY:
     def getTarget(self):
         return self.target
 
-# add
+# edit :2022.04.15
     def setCvssv3(self, cvssv3):
         self.cvssv3 = cvssv3
 
     def getCvssv3(self):
         return self.cvssv3
 
-    def appendCpe(self, cpe):
-        self.cpe.append(cpe)
+    def appendCpe(self, cpes):
+        self.cpes.append(cpes)
 
-    def getCpe(self):
-        return self.cpe
+    def getCpes(self):
+        return self.cpes
 
-    def setPublishedDate(self, pubdate):
+    def setPublishedDate(self,pubdate):
         self.publisheddate = pubdate
 
     def getPublishedDate(self):
@@ -149,8 +194,14 @@ class VULNERABILITY:
 
     def getHascpe(self):
         return self.hascpe
-# end edit
 
+    def setRecent(self, recent):
+        self.recent = recent
+
+    def getRecent(self):
+        return self.recent
+
+# end edit here 2022.04.15
 
     def searchbyKeys (self, keylist):
         ret = []
