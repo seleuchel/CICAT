@@ -30,13 +30,20 @@ from collections import defaultdict
 from afactory import ATTACK_FACTORY
 from ifactory import CI_FACTORY
 from tfactory import THREAT_FACTORY
-from vfactory import VULNERABILIY_FACTORY
+from vfactory import VULNERABILIY_FACTORY, RECENT_VULNERABILITY_FACTORY
 from stats import sortSystemsbyFunction
 import os
 
+# 22.04.21
 m_CVEFiles = []
+recent_CVEFiles = []
+
 for cve in os.listdir(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "CVE"))):
     m_CVEFiles.append(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "CVE", cve)))
+
+# 22.04.21
+for recent_cve in os.listdir(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "RecentCVE"))):
+    recent_CVEFiles.append(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "RecentCVE", recent_cve)))
 
 m_file_INFRASTRUCTURE = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "INFRASTRUCTURE.xlsx"))
 m_file_SCENARIOS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data", "SCENARIOS.xlsx"))
@@ -79,7 +86,12 @@ def LOAD_DATA (infraSpread, threatSpread, CVEflag, trace):
     if CVEflag:
        print('Loading CVE data from', m_CVEFiles)
        vlnFACTORY = VULNERABILIY_FACTORY(True)
-       ret['VULNERABILITY'] = vlnFACTORY.load(m_CVEFiles, ret['CTYPE'])
+       # 22.04.21 : NEW CVE AND RECENT CVE
+       recentvlnFACTORY = RECENT_VULNERABILITY_FACTORY(True)
+       # 22.04.21 : load recent cve list
+       recentcvelist, startdate, enddate = recentvlnFACTORY.load(recent_CVEFiles)
+       ret['VULNERABILITY'] = vlnFACTORY.load(m_CVEFiles, recentcvelist, ret['CTYPE'], startdate, enddate)
+       # 22.04.21 : edit end
 
     # Initialize infrastructure relationships [requires vulnerability data be preloaded]
     ciFACTORY.initRelationships(ret )
