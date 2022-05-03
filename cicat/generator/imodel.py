@@ -56,23 +56,39 @@ class CTYPE:
 
     def getID(self):
         return self.ctid
-    
+
     def getVendor(self):
         return self.vendor
-    
+
     def getDesc(self):
         return self.desc
-    
+
     def getType(self):
         return self.typex
-    
+
     def getPlatform(self):
         return self.plat
-    
-    def addVulnerability (self, ventry):
-        self.vulnerability.append (ventry)
-        
-    
+
+    def getCpes(self):  # edit
+        return self.cpes
+
+    def getOnmachine(self):  # edit
+        return self.onmachine
+
+    def addVulnerability(self, ventry):
+        self.vulnerability.append(ventry)
+
+    def findctype(self, ctid):  # edit 0418
+        if self.getID() == ctid:
+            return True
+        else:
+            return False
+
+    def cpestrtoCPE(self,cpes):
+        ret = []
+        for cpe in cpes:
+            ret.append(CPE(cpe))
+        return ret
     
     def link_4 (self, surfArray, trace=True ):
         for surf in surfArray:
@@ -197,7 +213,7 @@ class COMPONENT:
             self.susceptibility = len (self.ctype.getVulnerabilityList())
         return self.susceptibility
 
-
+    # here
     critsScore = [['cap MC', 50],['cap ME', 35],['cap MS', 20],
                   ['fx MC', 30],['fx ME', 25],['fx MS', 18],
                   ['sys MC', 26],['sys ME', 22],['sys MS', 15],
@@ -288,7 +304,8 @@ class SYSTEM:
         ret = self.fcrits.copy()
         ret.append(self.crit)
         return ret
-    
+
+    # here2
     critsScore = [['cap MC', 50],['cap ME', 35],['cap MS', 20],
                   ['fx MC', 30],['fx ME', 25],['fx MS', 18],
                   ['sys MC', 26],['sys ME', 22],['sys MS', 15],
