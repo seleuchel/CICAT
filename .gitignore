@@ -4,8 +4,9 @@ cicat/generator/__pycache__
 cicat/data/CVE
 cicat/data/RecentCVE
 cicat/example/0504_real
-../generator/__pycache__/
+cicat/generator/__pycache__/
 *.txt
+*.pyc
 edit_INFRASTRUCTURE.ap1000.xlsx
 edit_SCENARIOS.ap1000.xlsx
 todolist.txt
