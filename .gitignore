@@ -2,7 +2,10 @@ testdata/
 __pycache__/
 cicat/generator/__pycache__
 cicat/data/CVE
+cicat/example/0504_real
 *.txt
 edit_INFRASTRUCTURE.ap1000.xlsx
 edit_SCENARIOS.ap1000.xlsx
 todolist.txt
+
+
