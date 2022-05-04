@@ -86,14 +86,6 @@ class VULNERABILITY:
         # 22.04.21
         self.recent = False  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
 
-        # add
-        self.hascvss = False
-        self.hascpe = False
-        self.cvssv3 = 0.0 # check impact is null? [impact][baseMetricV3][cvssV3][baseScore] # no? then, cve
-        self.cpe = []
-        self.publisheddate = "" # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
-        self.lastmodifieddate = ""  # datetime.datetime.strptime(date[:10], "%Y-%m-%d")
-
     # this info change
     effectkeys = ['DoS','denial of service', 'denial-of-service', 'hang', 'crash', 'panic', 'outage', 'reload', 'reboot', 'restart', \
                   'degrade', 'flood', 'slow', 'delay', 'replay', 'exhaust', 'leak', 'deplete', 'consume', 'overwrite', 'corrupt', 'modify', 'alter', \

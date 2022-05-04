@@ -384,9 +384,12 @@ class RECENT_VULNERABILITY_FACTORY():
             print('Loading Recent CVE data..')
 
         # set start / end time
-        _ = self.recentcvefilelist[0].split("_")
-        st = _[3]
-        et = _[4].split(".")[0]
+
+        _ = self.recentcvefilelist[0].split("\\")[-1]
+        _ = _.split("_")
+        print("why : ", _)
+        st = _[2]
+        et = _[3].split(".")[0]
         self.startdate = datetime.datetime(int(st[:4]),int(st[4:6]),int(st[6:]))
         self.enddate = datetime.datetime(int(et[:4]),int(et[4:6]),int(et[6:]))
 

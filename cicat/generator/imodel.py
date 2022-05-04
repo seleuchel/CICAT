@@ -25,7 +25,7 @@ The Government retains a nonexclusive, royalty-free right to publish or reproduc
 imodel.py - Object classes for infrastructure data
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 """
-
+from tmodel import CPE
 
 class CTYPE:
     def __init__ (self, ctid, vendor, desc, typex, plat, cpes, onmachine):
@@ -38,10 +38,16 @@ class CTYPE:
         self.surface = []
 
         # add
-        self.cpes = cpes.split(",") if cpes is not None else [] # use ,
+        self.cpes = self.cpestrtoCPE(cpes.split(",")) if cpes is not None else [] # use ,
         self.onmachine = onmachine.split(",") if onmachine is not None else []  # use ,
 
-    def __str__ (self): # DBG
+    def cpestrtoCPE(self,cpes):
+        ret = []
+        for cpe in cpes:
+            ret.append(CPE(cpe))
+        return ret
+
+    def __str__ (self):
         result = "========== CTYPE ==========" + "\n"
         result += "ctid : " + str(self.ctid)  + "\n"
         result += "vendor : " + str(self.vendor) + "\n"
@@ -50,8 +56,8 @@ class CTYPE:
         result += "plat : " + str(self.plat) + "\n"
         result += "vulnerability : " + str(self.vulnerability) + "\n"
         result += "surface : " + str(self.surface) + "\n"
-        result += "cpes : " + str(self.cpes) + "\n"
-        result += "onmachine : " + str(self.onmachine) + "\n"
+        result += "cpes : " + str(i.getCPE() for i in self.cpes) + "\n"
+        result += "onmachine : " + str(self.onmachine) + "\n" # 여기 있으면, 이것이 그 자산의 취약점으로 들어감 ㅇㅇ
         return result
 
     def getID(self):
@@ -83,12 +89,6 @@ class CTYPE:
             return True
         else:
             return False
-
-    def cpestrtoCPE(self,cpes):
-        ret = []
-        for cpe in cpes:
-            ret.append(CPE(cpe))
-        return ret
     
     def link_4 (self, surfArray, trace=True ):
         for surf in surfArray:
